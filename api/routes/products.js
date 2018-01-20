@@ -6,6 +6,7 @@ const Product = require('../models/product');
 
 router.get('/', (req, res, next) => {
   // no argument so find all elements
+  // you can add other methods to find like "where" and "limit"
   Product.find()
     .select('name price _id')
     //exec returns a promise
@@ -135,7 +136,7 @@ router.delete('/:productId', (req, res, next) => {
         request: {
           type: 'POST',
           url: 'http://localhost:8080/products',
-          data: { name: 'String', price: 'Number' }
+          body: { name: 'String', price: 'Number' }
         }
       });
     })

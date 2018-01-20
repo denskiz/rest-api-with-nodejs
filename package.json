@@ -7,13 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
   },
-  
   "author": "Dennis",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "mongoose": "5.0.0-rc1",
+    "mongoose": "5.0.1",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
