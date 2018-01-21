@@ -1,6 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  // only accept images files
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(new Error('file type not allowed'), false);
+  }
+};
+// upload limited to 5mb
+const upload = multer({
+  storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 1024 * 1024 * 5 }
+});
 
 const Product = require('../models/product');
 
@@ -8,7 +33,7 @@ router.get('/', (req, res, next) => {
   // no argument so find all elements
   // you can add other methods to find like "where" and "limit"
   Product.find()
-    .select('name price _id')
+    .select('name price _id productImage')
     //exec returns a promise
     .exec()
     .then(docs => {
@@ -18,6 +43,7 @@ router.get('/', (req, res, next) => {
           return {
             name: doc.name,
             price: doc.price,
+            productImage: doc.productImage,
             _id: doc._id,
             request: {
               type: 'GET',
@@ -42,11 +68,13 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('productImage'), (req, res, next) => {
+  console.log(req.file);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
-    price: req.body.price
+    price: req.body.price,
+    productImage: req.file.path
   });
   product
     .save()
@@ -76,7 +104,7 @@ router.post('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
-    .select('name price _id')
+    .select('name price _id productImage')
     .exec()
     .then(doc => {
       console.log('From database', doc);

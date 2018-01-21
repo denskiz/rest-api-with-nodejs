@@ -13,6 +13,8 @@ mongoose.connect(
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
+// Make folder statically available
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
