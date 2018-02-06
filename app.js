@@ -8,7 +8,7 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
 mongoose.connect(
-  ''
+  'mongodb://dennis:dennis@ds037508.mlab.com:37508/node-rest-shop'
 );
 mongoose.Promise = global.Promise;
 
