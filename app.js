@@ -3,13 +3,14 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
-mongoose.connect(
-  'mongodb://dennis:dennis@ds037508.mlab.com:37508/node-rest-shop'
-);
+require('dotenv').config();
+mongoose.connect(process.env.MONGODB_URI);
+
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
@@ -17,6 +18,7 @@ app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'views')));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -32,6 +34,10 @@ app.use((req, res, next) => {
 });
 
 // Routes which should handle requests
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
+});
+
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 
